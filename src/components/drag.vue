@@ -1,46 +1,46 @@
 <template>
 	<div class="container">
-		<p>left: {{left}}</p>
-		<p>offsetX: {{offsetX}}</p>
-		<p>l_x: {{l_x}}</p>
-		<p>r_x:{{r_x}}</p>
-		<p>in_Width: {{in_width}}</p>
+		<!-- <p>left: {{wrap.left}}</p>
+		<p>offsetX: {{wrap.offsetX}}</p>
+		<p>inter.l_x: {{inter.l_x}}</p>
+		<p>inter.r_x:{{inter.r_x}}</p>
+		<p>inter.width: {{inter.width}}</p>
 		<p>leftVal: {{val.left}}</p>
 		<p>rightVal: {{val.right}}</p>
-		<p>actualVal: {{val.actual_val}}</p>
+		<p>actualVal: {{val.actual_val}}</p> -->
 		<div 
-			class="wrap_box" 
+			class="wrap-box" 
 			id="wrapBox"
 			ref="wrap_box" 
-			v-on:click.self="changePos($event)"
-		>
+			v-on:click.self="changePos($event)">
 			<div 
-				class="in_box"
+				class="in-box"
 				id="inBox" 
-				v-on:mousedown.prevent="down($event)"
-				:style="{width: `${in_width}px`,left: `${offsetX}px`}" 
+				v-on:mousedown.prevent.self="down($event)"
+				:style="{width: `${inter.width}px`,left: `${wrap.offsetX}px`}" 
 				ref="in_box">
+				<div 
+					class="left ctrl-icon"
+					id="lCtrl"	
+					v-on:mousedown.prevent="down($event)">
+				</div>
+				<div 
+					class="right ctrl-icon"
+					id="rCtrl"
+					v-on:mousedown.prevent="down($event)">
+				</div>			
 			</div>
-			<div 
-				class="left ctrl_icon"
-				:style="`left: ${l_x}px`"
-				v-on:mousedown.prevent="down($event)">
-				<img src="../assets/ctrl.png" alt="" id="lCtrl">
+			<div class="text-container" ref="text">
+				<p class="left-text" :style="`left: ${inter.l_x - 210}px`">{{ ts2Date(this.val.left) }}</p>
+				<p class="right-text" :style="`left: ${inter.r_x}px`">{{ ts2Date(this.val.right) }}</p>
 			</div>
-			<div 
-				class="right ctrl_icon"
-				:style="`left: ${r_x}px`"
-				v-on:mousedown.prevent="down($event)">
-				<img src="../assets/ctrl.png" alt="" id="rCtrl">
-			</div>
-
 		</div>
-
 	</div>
 </template>
 <script>
-	//将时间转化为宽度，用以CSS
-	const PER = 10;
+	//将时间转化为宽度，用以CSS使用  
+	var PER;
+	import { ts2Date } from '../utils/time.js';
 	
 	export default {
 		name: 'drag',
@@ -54,47 +54,63 @@
 			},
 			range: {
 				type: Array
-			},
-			all_time: {
-				// 一个单位代表1s，默认值为1小时，最大为24小时
-				type: Number,
-				default: 60,
-				validator(val) {
-					return val > 0 && val < 24 * 60
-				}
-			},
-			in_time: {
-				//内部滑块所代表的时间,默认值为15分钟，最大为24小时
-				type: Number,
-				default: 30,
-				validator(val) {
-					return val > 0 && val < 24 * 60
-				}
-			},
+			}
 		},
 		data() {
 			return {
-				l_x:  (this.time[1] - this.time[0] ),	//左控制块的位置坐标
-				r_x: (this.in_time + this.init_left) * PER,	//右控制块的位置坐标
-				left: this.init_left * PER,		//初始位置
-				wrap_width: 0,	//外部容器的初始宽度
-				in_width: (this.time[1] - this.time[0] ),	//内部滑块的初始宽度
-				down_width: this.in_time * PER, //保存按下鼠标时内部滑块的宽度
-				offsetX: this.init_left * PER,	//整个滑块的偏移量
 				isDown: false,	//是否已经点击
 				down_target: '', //点击的目标
 				isOut: false,	//是否出界
-				begin: 0,	//按下鼠标时的坐标	
+				begin: 0,	//按下鼠标时的坐标
+				down_width: 0, //保存按下鼠标时内部滑块的宽度
+				//真正的值.	
 				val: {
-					left: this.init_left,
-					right: this.in_time + this.init_left,
-					actual_val: this.in_time
+					left: 0,
+					right: 0,
+					actual_val: 0
+				},
+				//滑块的属性
+				inter: {
+					l_x: 0,
+					r_x: 0,
+					width: 0,
+					time: 0,
+				},
+				//整个可选区域的属性
+				wrap: {
+					left: 0,
+					width: 0,
+					offsetX: 0,
+					time: 0,
 				},
 				left_limit: 0,
-				right_limit: this.all_time
+				right_limit: 0,
+				ts2Date: ts2Date
 			}
 		},
 		methods: {
+			init() {
+				this.wrap.width = this.$refs.wrap_box.getBoundingClientRect().width;
+				this.wrap.time = this.range[1] - this.range[0];
+				PER = this.wrap.time / this.wrap.width;	//PER根据传入的数据来自定义
+				
+				this.inter.time = this.time[1] - this.time[0];
+				this.inter.l_x = (this.time[0] - this.range[0]) / PER;  //单位为px
+				this.inter.r_x = (this.time[1] - this.time[0]) / PER;	//单位为px
+				this.inter.width = (this.time[1] - this.time[0]) / PER; //单位为px
+				
+				this.wrap.left = this.inter.l_x;
+				this.wrap.offsetX = this.inter.l_x;
+				this.val.right = this.inter.time + this.inter.l_x;
+				this.val.left = this.inter.l_x;
+				this.val.actual_val = this.val.right - this.val.left;
+
+				this.down_width = this.inter.width;
+				
+
+				this.right_limit = this.wrap.width;  //以px为单位
+				this.left_limit = 0;
+			},			
 			down(e) {
 				let target = e.target.id;
 
@@ -107,119 +123,120 @@
 			},
 			changePos(e) {
 				let mid_x = e.offsetX;
-				let half_width = this.in_width / 2;
-				let right_limit = this.right_limit * PER;
-				let left_limit = this.left_limit * PER;
-				let compareVal = (mid_x > this.r_x) ? mid_x + half_width : mid_x - half_width;
+				let half_width = this.inter.width / 2;
+				let right_limit = this.right_limit;
+				let left_limit = this.left_limit;
+				let compareVal = (mid_x > this.inter.r_x) ? mid_x + half_width : mid_x - half_width;
 				let limit_status = this.isCross(compareVal, left_limit, right_limit);
 
-				if(limit_status == 0) {
-					this.l_x = mid_x - half_width;
-					this.r_x = mid_x + half_width;
-					this.left = this.offsetX = this.l_x;
+				console.log(e)
+				if(this.isOut == false) {
+					if(limit_status == 0) {
+						this.inter.l_x = mid_x - half_width;
+						this.inter.r_x = mid_x + half_width;
+						this.wrap.left = this.wrap.offsetX = this.inter.l_x;
+					}
+					if(limit_status == 1) {
+						this.wrap.left = this.wrap.offsetX = this.inter.l_x = left_limit;
+						this.inter.r_x = this.inter.l_x + this.inter.width;
+					}
+					if(limit_status == 2) {
+						this.inter.r_x = right_limit;
+						this.wrap.offsetX = right_limit - this.inter.width;
+						this.wrap.left = this.inter.l_x = this.wrap.offsetX;
+					}
+					this.computeVal()
 				}
-				if(limit_status == 1) {
-					this.left = this.offsetX = this.l_x = left_limit;
-					this.r_x = this.l_x + this.in_width;
-				}
-				if(limit_status == 2) {
-					this.r_x = right_limit;
-					this.offsetX = right_limit - this.in_width;
-					this.left = this.l_x = this.offsetX;
-				}
-				this.computeVal()
+
 			},
 			upHandler() {
 				this.isDown = false;
 				//释放事件监听器
 				this.off(window, 'mousemove', this.moveHandler);
 				this.off(window, 'mouseup',this.upHandler);
-				this.l_x = this.offsetX;	//释放鼠标后，确定当前左控制块的坐标
-				this.left = this.offsetX;	//释放鼠标后，确定当前滑块的坐标
-				this.r_x = this.in_width + this.left;	//释放鼠标后，确定当前右控制块的坐标
-				this.down_width = this.in_width;  //释放鼠标后，将当前的内部滑块的宽度作为下次点击时内部滑块的宽度.
-
+				this.inter.l_x = this.wrap.offsetX;	//释放鼠标后，确定当前左控制块的坐标
+				this.wrap.left = this.wrap.offsetX;	//释放鼠标后，确定当前滑块的坐标
+				this.inter.r_x = this.inter.width + this.wrap.left;	//释放鼠标后，确定当前右控制块的坐标
+				this.down_width = this.inter.width;  //释放鼠标后，将当前的内部滑块的宽度作为下次点击时内部滑块的宽度.
+				this.from_move = true;
 			},
 			moveHandler(e) {
 				let offset = e.pageX - this.begin;
 
 				if(this.isDown && this.down_target == 'rCtrl') {
-					let right_limit_width = this.wrap_width;
-					let left_limit_width = this.l_x;
-					let limit_status = this.isCross(this.left + this.down_width + offset, left_limit_width, right_limit_width);
-					
+					let right_limit_width = this.wrap.width;
+					let left_limit_width = this.inter.l_x;
+					let limit_status = this.isCross(this.wrap.left + this.down_width + offset, left_limit_width, right_limit_width);
+					this.isOut = !!limit_status;
+
 					if(limit_status == 0) {
-						this.in_width = offset + this.down_width;	//修改内部滑块的宽度
-						this.r_x = this.in_width + this.left;
+						this.inter.width = offset + this.down_width;	//修改内部滑块的宽度
+						this.inter.r_x = this.inter.width + this.wrap.left;
 					}
 					if(limit_status == 2) {
-						this.in_width = right_limit_width - this.left;
-						this.r_x = this.in_width + this.left;
+						this.inter.width = right_limit_width - this.wrap.left;
+						this.inter.r_x = this.inter.width + this.wrap.left;
 					}
 					if(limit_status == 1) {
-						this.r_x = left_limit_width;
+						this.inter.r_x = left_limit_width;
+						this.inter.width = this.inter.r_x - this.inter.l_x;
 					}
 				}
 
 				if(this.isDown && this.down_target == 'lCtrl') {
-					let left_limit_width = this.left_limit * PER;
-					let right_limit_width = this.r_x;
-					
-					let limit_status = this.isCross(this.left + offset, left_limit_width, right_limit_width);
+					let left_limit_width = this.left_limit;
+					let right_limit_width = this.inter.r_x;
+					let limit_status = this.isCross(this.wrap.left + offset, left_limit_width, right_limit_width);
+					this.isOut = !!limit_status;
 
 					if(limit_status == 0) {
-						this.offsetX = this.left + offset;
-						this.in_width = this.down_width - offset;
-						this.l_x = this.offsetX;
+						this.wrap.offsetX = this.wrap.left + offset;
+						this.inter.width = this.down_width - offset;
+						this.inter.l_x = this.wrap.offsetX;
 					}
 					if(limit_status == 1) {
-						this.offsetX = left_limit_width;
-						this.in_width = right_limit_width;
-						this.l_x = this.offsetX;
+						this.wrap.offsetX = left_limit_width;
+						this.inter.width = right_limit_width;
+						this.inter.l_x = this.wrap.offsetX;
 					}
 					if(limit_status == 2) {
-						
+						this.inter.l_x = this.inter.r_x;
+						this.wrap.offsetX = this.inter.l_x;
+						this.inter.width = this.inter.r_x - this.inter.l_x;
 					}
 					
 				}
 
 				if(this.isDown && this.down_target == "inBox") {
 					//判断滑块的越界情况
-					let left_limit_width = this.left_limit * PER;
-					let right_limit_width = this.right_limit * PER - this.in_width;
-					let limit_status = this.isCross(this.left + offset, left_limit_width, right_limit_width);
+					let left_limit_width = this.left_limit;
+					let right_limit_width = this.right_limit - this.inter.width;
+					let limit_status = this.isCross(this.wrap.left + offset, left_limit_width, right_limit_width);
+					this.isOut = !!limit_status;
 
 					if(limit_status == 1) {
-						this.offsetX = left_limit_width;
-						this.r_x =	 left_limit_width + this.in_width;
+						this.wrap.offsetX = left_limit_width;
+						this.inter.r_x = left_limit_width + this.inter.width;
 					}
 					if(limit_status == 2) {
-						this.offsetX = right_limit_width;
-						this.r_x =	 right_limit_width + this.in_width;
+						this.wrap.offsetX = right_limit_width;
+						this.inter.r_x = right_limit_width + this.inter.width;
 					}
 					if(limit_status == 0) {
-						this.offsetX = this.left + offset;
-						this.r_x = this.offsetX + this.in_width;
+						this.wrap.offsetX = this.wrap.left + offset;
+						this.inter.r_x = this.wrap.offsetX + this.inter.width;
 					}	
 
-					this.l_x = this.offsetX;
+					this.inter.l_x = this.wrap.offsetX;
 				}
 
 				this.computeVal()
 
 			},
-
-			
 			/**
-			 * @param {number} val
-			 * @param {number} left_limit
-			 * @param {number} right_limit
 			 * @return  0: 未越界 1：左越界 2：右越界
 			*/
 			isCross(val, left_limit, right_limit) {
-				// console.log("val", val)
-				// console.log("left_limit", left_limit)
-				// console.log("right_limit", right_limit)
 				if(val < left_limit) {
 					return 1  
 				} else if(val > right_limit){
@@ -243,21 +260,21 @@
 					return e.detachEvent('on', event, handler)
 				}
 			},
-			//更新this.val的值，并传给父组件.
+			//计算this.val的值，并传给父组件.
 			computeVal() {
-				this.val.left =this.l_x / PER
-				this.val.right = this.r_x / PER
+				this.val.left = this.inter.l_x  * PER + this.range[0];
+				this.val.right = this.inter.r_x * PER + this.range[0];
 				this.val.actual_val = Math.floor(this.val.right - this.val.left)
+
+				//将真实选中数据传给父组件
 				this.$emit('updateVal', [this.val.left, this.val.right])
 			}
 		},
 		beforeCreate() {
-			window.data = this;
 		},
 		mounted() {
+			this.init();
 			this.computeVal()
-			this.wrap_width = this.$refs.wrap_box.getBoundingClientRect().width;
-			console.log(this.time);
 		},
 		computed: {
 		}
@@ -268,16 +285,15 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-	.wrap_box {
+	.wrap-box {
 		position: relative;
-		left: 200px;
 		background-color: skyblue;
 	}
 
-	.wrap_box {
+	.wrap-box {
 		cursor: pointer;
 	}
-	.in_box {
+	.in-box {
 		position: relative;
 		top: 0;
 		left: 0px;
@@ -286,27 +302,50 @@
 		border-radius: 5px 5px;
 	}
 
-	.in_box:hover {
-		cursor: ew-resize;
+	.text-container {
+		display: none;
 	}
 
-	.in_box::before {
+	.in-box:hover + .text-container{
+		display: block;
 	}
 
 	.left, .right {
+		display: inline-block;
 		position: absolute;
 		top: 50%;
-		transform: translate(-50%, -50%);
-		display: inline-block;
-	}
-
-	.ctrl_icon  img{
+		width: 10px;
+		height: 100%;
+		border: 1px solid red;
 		cursor: ew-resize;
-		vertical-align: middle;
-		width: 20px;
 	}
 
-	.ctrl_container {
+	.left {
+		transform: translate(-50%, -50%);
+		left: 0;
+	}
+
+	.right {
+		transform: translate(50%, -50%);
+		right: 0;
+	}
+
+	.left-text, .right-text {
+		position: absolute;
+		top: 0;
+		width: 200px;
+	}
+
+	.left-text {
+		text-align: right;
+	}
+
+	.right-text {
+		text-align: left;
+		margin-left: 10px;
+	}
+
+	.ctrl-container {
 		position: relative;
 	}
 
