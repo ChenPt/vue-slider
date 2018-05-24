@@ -1,21 +1,12 @@
-# test-demo
+# vue-slider
 
-> A Vue.js project
+写的一个小组件，滑动选择
 
-## Build Setup
 
-``` bash
-# install dependencies
-npm install
+# TODOLIST
 
-# serve with hot reload at localhost:8080
-npm run dev
+- [x] 支持左右调节
+- [x] 支持直接点击选中范围
+- [x] 支持滑块整体移动
+- [ ] ....
 
-# build for production with minification
-npm run build
-
-# build for production and view the bundle analyzer report
-npm run build --report
-```
-
-For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
