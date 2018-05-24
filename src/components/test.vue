@@ -1,21 +1,19 @@
 <template>
     <div class="hello">
-        <drag v-model="initData" :range="range"></drag>
-        <!-- <test1 v-model="initData"></test1> -->
+        <slider v-model="initData" :range="range"></slider>
         <p>{{ initData }}</p>
     </div>
 </template>
 
 <script>
-    import drag from './drag'
+    import slider from './slider'
     import test1 from './test1'
     import { toUnixTime } from '../utils/time.js'
 
     export default {
         name: 'test',
         components: {
-            test1,
-            drag
+            slider
         },
         data() {
             return {

@@ -43,7 +43,7 @@
 	import { ts2Date } from '../utils/time.js';
 	
 	export default {
-		name: 'drag',
+		name: 'slider',
 		model: {
 			prop: 'initData',
 			event: 'updateVal'
