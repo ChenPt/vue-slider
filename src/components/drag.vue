@@ -30,10 +30,10 @@
 					v-on:mousedown.prevent="down($event)">
 				</div>			
 			</div>
-			<div class="text-container" ref="text">
-				<p class="left-text" :style="`left: ${inter.l_x - 210}px`">{{ ts2Date(this.val.left) }}</p>
+			<!-- <div class="text-container" ref="text">
+				<p class="left-text" :style="`left: ${inter.l_x -210}px`">{{ ts2Date(this.val.left) }}</p>
 				<p class="right-text" :style="`left: ${inter.r_x}px`">{{ ts2Date(this.val.right) }}</p>
-			</div>
+			</div> -->
 		</div>
 	</div>
 </template>
@@ -45,11 +45,11 @@
 	export default {
 		name: 'drag',
 		model: {
-			prop: 'time',
+			prop: 'initData',
 			event: 'updateVal'
 		},
 		props: {
-			time: {
+			initData: {
 				type: Array
 			},
 			range: {
@@ -74,14 +74,14 @@
 					l_x: 0,
 					r_x: 0,
 					width: 0,
-					time: 0,
+					initData: 0,
 				},
 				//整个可选区域的属性
 				wrap: {
 					left: 0,
 					width: 0,
 					offsetX: 0,
-					time: 0,
+					initData: 0,
 				},
 				left_limit: 0,
 				right_limit: 0,
@@ -91,17 +91,17 @@
 		methods: {
 			init() {
 				this.wrap.width = this.$refs.wrap_box.getBoundingClientRect().width;
-				this.wrap.time = this.range[1] - this.range[0];
-				PER = this.wrap.time / this.wrap.width;	//PER根据传入的数据来自定义
+				this.wrap.initData = this.range[1] - this.range[0];
+				PER = this.wrap.initData / this.wrap.width;	//PER根据传入的数据来自定义
 				
-				this.inter.time = this.time[1] - this.time[0];
-				this.inter.l_x = (this.time[0] - this.range[0]) / PER;  //单位为px
-				this.inter.r_x = (this.time[1] - this.time[0]) / PER;	//单位为px
-				this.inter.width = (this.time[1] - this.time[0]) / PER; //单位为px
+				this.inter.initData = this.initData[1] - this.initData[0];
+				this.inter.l_x = (this.initData[0] - this.range[0]) / PER;  //单位为px
+				this.inter.r_x = (this.initData[1] - this.initData[0]) / PER;	//单位为px
+				this.inter.width = (this.initData[1] - this.initData[0]) / PER; //单位为px
 				
 				this.wrap.left = this.inter.l_x;
 				this.wrap.offsetX = this.inter.l_x;
-				this.val.right = this.inter.time + this.inter.l_x;
+				this.val.right = this.inter.initData + this.inter.l_x;
 				this.val.left = this.inter.l_x;
 				this.val.actual_val = this.val.right - this.val.left;
 
@@ -267,10 +267,8 @@
 				this.val.actual_val = Math.floor(this.val.right - this.val.left)
 
 				//将真实选中数据传给父组件
-				this.$emit('updateVal', [this.val.left, this.val.right])
+				this.$emit('updateVal', [Math.floor(this.val.left), Math.floor(this.val.right)])
 			}
-		},
-		beforeCreate() {
 		},
 		mounted() {
 			this.init();
@@ -303,11 +301,14 @@
 	}
 
 	.text-container {
-		display: none;
+		opacity: 0;
+		transition: all 0.2s linear;
 	}
 
 	.in-box:hover + .text-container{
 		display: block;
+		opacity: 1;
+		
 	}
 
 	.left, .right {
