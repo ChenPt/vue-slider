@@ -7,7 +7,6 @@
 
 <script>
     import slider from './slider'
-    import test1 from './test1'
     import { toUnixTime } from '../utils/time.js'
 
     export default {

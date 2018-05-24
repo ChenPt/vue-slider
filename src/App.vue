@@ -5,8 +5,6 @@
 </template>
 
 <script>
-
-import test1 from './components/test1'
 import test from './components/test'
 
 export default {
