@@ -1,8 +1,8 @@
 <template>
     <div class="hello">
-        <drag v-model="time" :range="range"></drag>
-        <!-- <test1 v-model="time"></test1> -->
-        <p>{{ time }}</p>
+        <drag v-model="initData" :range="range"></drag>
+        <!-- <test1 v-model="initData"></test1> -->
+        <p>{{ initData }}</p>
     </div>
 </template>
 
@@ -21,13 +21,28 @@
             return {
                 //相差两分钟
                 //传入unix时间戳时间为
-                time: [toUnixTime(+new Date()) - 3600, toUnixTime(+new Date()) - 3480],
-                range: [toUnixTime(+new Date()) - 3600, toUnixTime(+new Date())]
+                // initData: [toUnixTime(+new Date()) - 3600, toUnixTime(+new Date()) - 3480],
+                // range: [toUnixTime(+new Date()) - 3600, toUnixTime(+new Date())]
+                
+                initData: [0, 10],  //开始的区间范围
+                range: [0, 100]     //整体可选的范围
             }
         },
         methods: {
+            testValInit(type) {
+                if(type === 'time') {
+                    this.initData = [toUnixTime(+new Date()) - 3600, toUnixTime(+new Date()) - 3480]
+                    this.range = [toUnixTime(+new Date()) - 3600, toUnixTime(+new Date())]
+                }
+
+                if(type === 'number') {
+                    this.initData = [0, 10]
+                    this.range = [0, 100]
+                }
+            }
         },
         mounted() {
+            this.testValInit('number')
         }
     }
 
