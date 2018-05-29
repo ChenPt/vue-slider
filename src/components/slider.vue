@@ -1,6 +1,6 @@
 <template>
 	<div class="container">
-		<div class="verbose" v-if="verbose">
+		<div class="verbose" v-if="verbose" >
 			<p>left: {{wrap.left}}</p>
 			<p>offsetX: {{wrap.offsetX}}</p>
 			<p>inter.l_x: {{inter.l_x}}</p>
@@ -24,13 +24,13 @@
 				<div 
 					class="left ctrl-icon"
 					id="lCtrl"	
-					v-on:mousedown.prevent="down($event)">
+					v-on:mousedown.prevent.self="down($event)">
 					<div class="tip left-tip">{{ transfer(initData[0]) }}</div>
 				</div>
 				<div
 					class="right ctrl-icon"
 					id="rCtrl"
-					v-on:mousedown.prevent="down($event)">
+					v-on:mousedown.prevent.self="down($event)">
 					<div class="tip right-tip">{{ transfer(initData[1]) }}</div>
 				</div>			
 			</div>
@@ -62,11 +62,11 @@
 			verbose: {
 				type: Boolean,
 				default: false
-      },
-      formatter: {
-        type: Function | null,
-        default: null
-      }
+	  	},
+	  	formatter: {
+				type: Function | null,
+				default: null
+	 	 	}
 		},
 		data() {
 			return {
@@ -97,8 +97,8 @@
 				},
 				left_limit: 0,
 				right_limit: 0,
-        ts2Date: ts2Date,
-        tipVisible: false
+		ts2Date: ts2Date,
+		tipVisible: false
 			}
 		},
 		methods: {
@@ -109,7 +109,7 @@
 				
 				this.inter.initData = this.initData[1] - this.initData[0];
 				this.inter.l_x = (this.initData[0] - this.range[0]) / PER;  //单位为px
-				this.inter.r_x = (this.initData[1] - this.initData[0]) / PER;	//单位为px
+				this.inter.r_x = (this.initData[1] - this.range[0]) / PER;	//单位为px
 				this.inter.width = (this.initData[1] - this.initData[0]) / PER; //单位为px
 				
 				this.wrap.left = this.inter.l_x;
@@ -281,13 +281,13 @@
 
 				//将真实选中数据传给父组件
 				this.$emit('updateVal', [Math.floor(this.val.left), Math.floor(this.val.right)])
-      },
-      transfer (num) {
-        if (this.formatter) {
-          return this.formatter(num)
-        }
-        return num
-      }
+	  	},
+	  	transfer (num) {
+				if (this.formatter) {
+					return this.formatter(num)
+				}
+				return num
+			}
 		},
 		mounted() {
 			this.init();
@@ -316,32 +316,22 @@
 		left: 0px;
 		height: 50px;
 		background-color: rgba(250, 250, 250, .3);
-    border-radius: 5px 5px;
-    
-    &:hover {
-      .tip {
-        transition: all ease .5s;
-        display: block;
-        opacity: 1;
+		border-radius: 5px 5px;
+	
+		&:hover {
+			.tip {
+				transition: all ease .5s;
+				display: block;
+				opacity: 1;
 
-        &.left-tip {
-          transform: translate(-110%, -50%);
-        }
-        &.right-tip {
-          transform: translate(110%, -50%);
-        }
-      }
-    }
-	}
-
-	.text-container {
-		opacity: 0;
-		transition: all 0.2s linear;
-	}
-
-	.in-box:hover + .text-container{
-		display: block;
-		opacity: 1;
+				&.left-tip {
+					transform: translate(-110%, -50%);
+				}
+				&.right-tip {
+					transform: translate(110%, -50%);
+				}
+			}
+		}
 	}
 
 	.left, .right {
@@ -364,68 +354,54 @@
 		right: 0;
 	}
 
-	.left-text, .right-text {
-		position: absolute;
-		top: 0;
-		width: 200px;
-	}
-
-	.left-text {
-		text-align: right;
-	}
-
-	.right-text {
-		text-align: left;
-		margin-left: 10px;
-	}
-
 	.ctrl-container {
 		position: relative;
 	}
 
 	.tip {
-    @bg-color: rgba(50, 50, 50, 0.7);
-    position: absolute;
-    top: 50%;
-    padding: 2px 8px;
-    height: 30px;
-    line-height: 30px;
-    background-color: @bg-color;
-    border-width: 0px;
-    border-color: rgb(51, 51, 51);
-    border-radius: 4px;
-    color: rgb(255, 255, 255);
-    opacity: 0;
-    white-space: nowrap;
+		@bg-color: rgba(50, 50, 50, 0.7);
+		display: none;
+		position: absolute;
+		top: 50%;
+		padding: 2px 8px;
+		height: 30px;
+		line-height: 30px;
+		background-color: @bg-color;
+		border-width: 0px;
+		border-color: rgb(51, 51, 51);
+		border-radius: 4px;
+		color: rgb(255, 255, 255);
+		opacity: 0;
+		white-space: nowrap;
 
-    &::after {
-      position: absolute;
-      top: 50%;
-      content: '';
-      border: 6px solid transparent;
-      width: 0;
-      height: 0;
-    }
+		&::after {
+			position: absolute;
+			top: 50%;
+			content: '';
+			border: 6px solid transparent;
+			width: 0;
+			height: 0;
+		}
 
 		&.left-tip {
-      left: 0;
-      transform: translate(-130%, -50%);
-      &::after {
-        right: 0;
-        border-left-color: @bg-color;
-        transform: translate(100%, -50%);
-      }
-    }
+			left: 0;
+			transform: translate(-130%, -50%);
+			&::after {
+				right: 0;
+				border-left-color: @bg-color;
+				transform: translate(100%, -50%);
+			}
+		}
 
-    &.right-tip {
-      right: 0;
-      transform: translate(130%, -50%);
-      &::after {
-        left: 0;
-        border-right-color: @bg-color;
-        transform: translate(-100%, -50%);
-      }
-    }
+		&.right-tip {
+			right: 0;
+			transform: translate(130%, -50%);
+			&::after {
+				left: 0;
+				border-right-color: @bg-color;
+				transform: translate(-100%, -50%);
+			}
+		}
 	}
 
 </style>
