@@ -5,6 +5,9 @@
             :verbose="true"
             :formatter="formatter">
         </slider>
+        <div>
+          {{ initData }}
+        </div>
     </div>
 </template>
 
@@ -22,10 +25,13 @@ export default {
       //相差十五分钟
       //传入unix时间戳时间为
       initData: [
-        toUnixTime(+new Date()) - 60 * 60 * 15,
-        toUnixTime(+new Date())
+          toUnixTime(+new Date()) - 60 * 60,
+          toUnixTime(+new Date()) - 60 * 40
       ],
-      range: [toUnixTime(+new Date()) - 60 * 60 * 60, toUnixTime(+new Date())]
+      range: [
+          toUnixTime(+new Date()) - 60 * 60 * 2, 
+          toUnixTime(+new Date())
+      ]
 
       // initData: [0, 10],  //开始的区间范围
       // range: [0, 100]     //整体可选的范围
@@ -35,14 +41,17 @@ export default {
     testValInit (type) {
       if (type === 'time') {
         this.initData = [
-          toUnixTime(+new Date()) - 3600,
-          toUnixTime(+new Date()) - 3480
+          toUnixTime(+new Date()) - 60 * 60,
+          toUnixTime(+new Date()) - 60 * 30
         ];
-        this.range = [toUnixTime(+new Date()) - 3600, toUnixTime(+new Date())];
+        this.range = [
+          toUnixTime(+new Date()) - 60 * 60 * 2, 
+          toUnixTime(+new Date())
+        ];
       }
 
       if (type === 'number') {
-        this.initData = [0, 10]
+        this.initData = [0, 10];
         this.range = [0, 100]
       }
     },
