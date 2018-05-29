@@ -7,7 +7,7 @@ export function ts2Date(ts, format = 'YYYY-MM-DD HH:MM') {
 
   let date = new Date(ts)
   let y = date.getFullYear();
-  let m = (date.getMonth() + 1 < 10 ? '0' : '') + date.getMonth();
+  let m = (date.getMonth() + 1 < 10 ? '0' : '') + (date.getMonth() + 1);
   let d = (date.getDate() < 10 ? '0' : '') + date.getDate();
   let h = (date.getHours() < 10 ? '0' : '') + date.getHours();
   let min = (date.getMinutes() < 10 ? '0' : '') + date.getMinutes();
