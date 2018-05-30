@@ -25,11 +25,11 @@ export default {
       //相差十五分钟
       //传入unix时间戳时间为
       initData: [
-          toUnixTime(+new Date()) - 60 * 60,
-          toUnixTime(+new Date()) - 60 * 40
+          toUnixTime(+new Date()) - 60 * 60 * 30,
+          toUnixTime(+new Date()) - 60 * 60 * 20
       ],
       range: [
-          toUnixTime(+new Date()) - 60 * 60 * 2, 
+          toUnixTime(+new Date()) - 60 * 60 * 60, 
           toUnixTime(+new Date())
       ]
 
@@ -38,29 +38,11 @@ export default {
     };
   },
   methods: {
-    testValInit (type) {
-      if (type === 'time') {
-        this.initData = [
-          toUnixTime(+new Date()) - 60 * 60,
-          toUnixTime(+new Date()) - 60 * 30
-        ];
-        this.range = [
-          toUnixTime(+new Date()) - 60 * 60 * 2, 
-          toUnixTime(+new Date())
-        ];
-      }
-
-      if (type === 'number') {
-        this.initData = [0, 10];
-        this.range = [0, 100]
-      }
-    },
     formatter (num) {
       return ts2Date(num)
     }
   },
   mounted () {
-    this.testValInit("time")
   }
 };
 </script>

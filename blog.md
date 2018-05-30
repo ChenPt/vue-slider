@@ -83,6 +83,8 @@ export default {
 因为需要动态改变滑块的位置，所以需要知道wrap的宽度，可以通过`this.$refs.wrap_box.getBoundingClientRect().width`来获取。
 $refs是一个对象，所有有ref属性的dom元素都存在于refs对象里，需要在HTML设置`ref="wrap_box" `，还有就是refs在DOM元素被渲染之前都是访问不到的, 在mounted钩子时才可以访问到。
 
+## less写法好像很简洁...学习了
+
 ## 问题
 目前组件的写法，传入数据只支持数字（时间戳也是数字）
 

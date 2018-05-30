@@ -34,10 +34,6 @@
 					<div class="tip right-tip">{{ transfer(initData[1]) }}</div>
 				</div>			
 			</div>
-			<!-- <div class="text-container" ref="text">
-				<p class="left-text" :style="`left: ${inter.l_x -210}px`">{{ ts2Date(this.val.left) }}</p>
-				<p class="right-text" :style="`left: ${inter.r_x}px`">{{ ts2Date(this.val.right) }}</p>
-			</div> -->
 		</div>
 	</div>
 </template>
@@ -97,8 +93,8 @@
 				},
 				left_limit: 0,
 				right_limit: 0,
-		ts2Date: ts2Date,
-		tipVisible: false
+				ts2Date: ts2Date,
+				tipVisible: false
 			}
 		},
 		methods: {
