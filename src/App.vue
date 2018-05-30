@@ -1,16 +1,19 @@
 <template>
   <div id="app">
-    <test></test>
+    <!-- <test></test> -->
+    <vdemo>123</vdemo>
   </div>
 </template>
 
 <script>
 import test from './components/test'
+import vdemo from './components/vuexDemo'
 
 export default {
   name: 'App',
   components: {
-    test
+    test,
+    vdemo
   }
 }
 </script>
