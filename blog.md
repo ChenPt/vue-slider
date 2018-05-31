@@ -93,3 +93,48 @@ $refs是一个对象，所有有ref属性的dom元素都存在于refs对象里�
 - [x] 完成基本的样式和支持数字数据(传入UNIX时间戳)
 - [ ] 支持其他数据格式
 
+## VUEX
+`Vue.use(Vuex)` 需要写在vuex的定义文件开头. PS：`@/store/index.js`
+
+然后需要全局引入，
+``` javascript
+// main.js
+
+import Vue from 'vue'
+import App from './App'
+import Vuex from 'vuex'
+import store from './store';
+
+Vue.config.productionTip = false
+
+/* eslint-disable no-new */
+new Vue({
+  el: '#app',
+  store,  
+  components: { App },
+  template: '<App/>'
+})
+```
+
+Vuex => 状态管理模式
+
+主要有四个部分，state，mutations，getters，actions, modules
+
+通常情况下，state的改变需要通过mutations的commit来提交(修改state)，mutation是同步的，而actions的commit是commit mutation，并没有直接修改state, action可以写异步代码，getters，是用于对state进行进一步的筛选后再返回筛选后的数据的方法的共用。(让一个处理state的方法可以被各个组件使用，而不需要复写一样的函数多次)
+
+
+mapState, mapGetters都是写在computed(计算属性里)，两个自带函数返回的都是对象，如果需要将返回的对象与计算属性已有的属性混合，可以使用`...`扩展运算符.
+
+mutations的commit格式`this.$store.commit(type, payload)`或者
+```
+this.$store.commit({
+    type: "MUTATION NAME"
+    yourData: "xxxx"
+})
+```
+一般来说,payload是个对象.
+
+mapActions是写在methods里的，action需要在store/index.js里先写好，然后可以在组件使用mapActions来注册actions方法，然后当某个事件发生就调用action(也可以直接写`this.$store.dispatch(name, payload)`)
+
+
+mutation和getter都接受一个state对象，而action接受的是一个类似state的context对象
