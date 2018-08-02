@@ -1,30 +1,51 @@
-<template>
+ <template>
   <div id="app">
-    <test></test>
-    <vdemo>123</vdemo>
+    <div class="hello">
+      <slider-custom
+        v-model="initData"
+        :range="range"
+        :formatter="formatter">
+      </slider-custom>
+    </div>
   </div>
 </template>
 
 <script>
-import test from './components/test'
-import vdemo from './components/vuexDemo'
+import sliderCustom from './components/slider'
+import { ts2Date, toUnixTime } from './utils'
 
 export default {
   name: 'App',
   components: {
-    test,
-    vdemo
+    sliderCustom
+  },
+  created () {
+  },
+  data () {
+    return {
+      initData: [
+        toUnixTime(+new Date() - 60 * 1000 * 5),
+        toUnixTime(+new Date()),
+      ],
+      range: [
+        toUnixTime(+new Date() - 60 * 1000 * 60),
+        toUnixTime(+new Date()),
+      ]
+    }
+  },
+  methods: {
+    formatter (ts) {
+      return ts2Date(ts, 'YYYY/MM/DD hh:mm')
+    }
   }
 }
 </script>
 
-<style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+<style lang="less" scoped>
+.hello {
+  width: 600px;
+  margin: 0 auto;
+  font-size: 14px;
 }
 </style>
+

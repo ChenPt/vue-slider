@@ -1,36 +1,33 @@
 <template>
     <div class="hello">
-        <slider-custom v-model="initData"
-            :range="range"
-            :verbose="true"
-            :formatter="formatter">
-        </slider-custom>
-        <div>
-          {{ initData }}
-        </div>
+      <slider-custom
+        v-model="initData"
+        :range="range"
+        :formatter="formatter">
+      </slider-custom>
     </div>
 </template>
 
 <script>
-import sliderCustom from "./slider";
-import { toUnixTime, ts2Date } from "../utils/time.js";
+// import sliderCustom from "./slider";
+import { ts2Date } from '../utils'
 
 export default {
   name: "test",
   components: {
-    slider
+    // sliderCustom
   },
   data () {
     return {
       //相差十五分钟
       //传入unix时间戳时间为
       initData: [
-        toUnixTime(+new Date()) - 60 * 60 * 30,
-        toUnixTime(+new Date()) - 60 * 60 * 20
+        +new Date() - 60 * 1000 * 5,
+        +new Date(),
       ],
       range: [
-        toUnixTime(+new Date()) - 60 * 60 * 60,
-        toUnixTime(+new Date())
+        +new Date() - 60 * 1000 * 60,
+        +new Date(),
       ]
 
       // initData: [0, 10],  //开始的区间范围
@@ -38,8 +35,8 @@ export default {
     };
   },
   methods: {
-    formatter (num) {
-      return ts2Date(num)
+    formatter (ts) {
+      return ts2Date(ts, 'YYYY-MM-DD HH:MM')
     }
   },
   mounted () {
@@ -51,5 +48,6 @@ export default {
 .hello {
   width: 600px;
   margin: 0 auto;
+  font-size: 14px;
 }
 </style>

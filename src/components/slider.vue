@@ -58,6 +58,7 @@ export default {
   },
   data () {
     return {
+      isActive: false,
       isDown: false,	//是否已经点击
       down_target: '', //点击的目标
       isOut: false,	//是否出界
@@ -126,6 +127,7 @@ export default {
       let compareVal = (mid_x > this.inter.r_x) ? mid_x + half_width : mid_x - half_width;
       let limit_status = this.isCross(compareVal, left_limit, right_limit);
 
+      this.isActive = true
       if (this.isOut == false) {
         if (limit_status == 0) {
           this.inter.l_x = mid_x - half_width;
@@ -142,6 +144,9 @@ export default {
           this.wrap.left = this.inter.l_x = this.wrap.offsetX;
         }
         this.computeVal()
+        this.$nextTick(() => {
+          this.isActive = false
+        })
       }
     },
     upHandler () {
@@ -294,7 +299,6 @@ export default {
     top: 0;
     right: -1em;
   }
-
   .in-box {
     position: relative;
     top: 0;
@@ -335,8 +339,8 @@ export default {
       left: 50%;
       transform: translate(-50%, -50%);
       height: 0.7em;
-      border-top: 2px solid black;
-      border-bottom: 2px solid black;
+      border-top: 2px solid #bbb;
+      border-bottom: 2px solid #bbb;
     }
   }
   .left-ctrl {
@@ -350,6 +354,7 @@ export default {
   }
   .tip {
     @bg-color: rgba(50, 50, 50, 0.7);
+    display: none;
     position: absolute;
     top: 50%;
     padding: 2px 8px;
